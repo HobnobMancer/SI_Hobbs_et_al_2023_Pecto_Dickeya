@@ -1,3 +1,4 @@
-theme: jekyll-theme-dinky
-title: SI Hobbs et al., 2023
+theme: jekyll-theme-minimal
+logo: '/assets/logo.svg'
+title: SI Hobbs et al., 2023 -- Association between carbohydrate processing enzyme activities and niche adaptation in soft rot Pectobacteriaceae
 description: Supplementary information for analyses reported in Hobbs et al. (2023), describing the evolution of the CAZome
