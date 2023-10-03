@@ -4,7 +4,7 @@
 
 This repository contains supplementary information for analyses reported in Hobbs et al. (2023), exploring the association between 
 the diversity of the Carbohydrate Active enZyme (CAZyme) complement and the carbohydrate processing phenotype and plant host range 
-of pythopathogens _Pectobacterium_ and _Dickeya_.
+of pythopathogens _Pectobacterium_, _Dickeya_ and recently defined _Musicola_.
 
 Run all commands provided in the walkthrough from the root of this directory.
 
@@ -14,11 +14,7 @@ Owing to the size of the data sets used, the figures are consequently compressed
 
 Additionally, some analyses are only briefly mentioned in the manuscript. The full method and results of these analyses are stored in this repository.
 
-For the complete analysis and results for each data set, follow the links:
-* [_Pectobacterium_ and _Dickeya_ genomes](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
-* [Intracellular and extracellular CAZyme](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_IE_cazomes.html)
-
-Find a full list of the results [here](#results).
+The complete analysis and results can be found in this [report](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html).
 
 ## How to use this repository.
 
@@ -110,13 +106,10 @@ Installation instructions for `signalP6` can be found [here](https://github.com/
 
 Owing to the size of the data sets used, the figures are consequently compressed in the final manuscript. This remote repository contains the original full size, high resolution figures.
 
-The original figures are found in the `results` directory, and contained within the `jupyter notebooks` used to run the analyses, which can be found here (the raw notebooks are for downloading and re-running locally, the website version are for viewing the results):
+The original figures are found in the `results` directory, and contained within the `jupyter notebooks` used to run the analyses, which can be found here (the raw notebook is for downloading and running locally, the website version is for viewing the results):
 * _Pectobacterium_ and _Dickeya_ reference data set:
     * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_pecto_dic_cazomes.ipynb)
     * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
-* Intracellular and extracellular CAZymes:
-    * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_IE_cazomes.ipynb)
-    * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_IE_cazomes.html)
 
 
 # Method: Reproducing the analyses
@@ -133,31 +126,22 @@ bioRxiv 2022.12.02.518825; doi: https://doi.org/10.1101/2022.12.02.518825
 
 ```bash
 # create a local CAZyme database
-scripts/build_cazyme_db.sh <email>
+scripts/download/build_cazyme_db.sh <email>
 ```
 
 This generated the local CAZyme database `data/cazy/cazy_db`.
 
 ## Download genomes
 
-## _Pectobacteriaceae_
+A plain text file listing the genomic version accessions of all 281 assemblies is listed in `data/genomic_accessions/pecto_dic_accessions`.
 
-### Download data
-
-`cazomevolve` was used to download all complete _Pectobacteriaceae_ genomic assemblies (in genome sequence and protein sequence FASTA file format) from NCBI Assembly, by querying the NCBI Taxonomy database and retrieving all genomic assemblies linked to the _Pectobacteriaceae_ (NCBI:txid1903410). To repeat this method, run the following command from the root of this directory:
+The proteome (`.faa`) protein and DNA sequence (`.fna`) FASTA files were downloaded from ncbi using the package `ncbi-genome-download`, configured using the bash script `download genomes.sh`:
 
 ```bash
-# download Pectobacteriaceae genomes from GenBank
-scripts/download/download_pecto_genomes.sh <email>
+scripts/download/download_genomes.sh
 ```
 
-**Note:** With the continual addition of new genomic assemblies to the NCBI Assembly database, repeating the download of _Pectobacteriaceae_ genomes may generate a different dataset to that presented in Hobbs _et al._. To repeat the analysis presented in the manuscript, run the following command from the root of the directory to configure `ncbi-genome-download` to download the 660 genomic assemblies of the genomes used in the manuscript:
-
-```bash
-scripts/download/download_same_pecto_genomes.sh
-```
-
-In both cases, the downloaded genomic sequence files were written to the dir `data/pectobact/genomes`, the downloaded protein FASTA files were written to `data/pectobact/proteomes`.
+The download protein FASTA files were written to the `data/proteomes` directory, and the DNA sequence files were written to the `data/genomes` directory.
 
 ### Predict proteomes
 
@@ -169,9 +153,9 @@ To identify those genomes were a proteome FASTA file was not available, and thus
 scripts/download/ident_missing_proteomes.py
 ```
 
-The script generated a text file listing the genomic accession of each assembly for which a proteome FASTA file (`.faa`) file was not downloaded. The file was written to `data/pectobact/missing_genomes`. 
+The script generated a text file listing the genomic accession of each assembly for which a proteome FASTA file (`.faa`) file was not downloaded. The file was written to `data/missing_genomes`. 
 
-If using the 660 assemblies presented in the manuscript, proteome FASTA files were not available for 104 assemblies.
+If using the 281 assemblies presented in the manuscript, proteome FASTA files were not available for 104 assemblies.
 
 The script `annotate_genomes.sh` coordinates running `prodigal` on all genome sequences were a proteome FASTA file could not be retrieved, and copies the predicted proteome FASTA file to the `data/pectobact/proteome` directory.
 
