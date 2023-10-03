@@ -47,6 +47,15 @@
 ncbi-genome-download \
     all \
     -s 'refseq' \
+    -F 'fasta' \
+    -A data/genomic_accessions/pecto_dict_accessions \
+    -o data/genomes \
+    --flat-output \
+    - v
+
+ncbi-genome-download \
+    all \
+    -s 'refseq' \
     -F 'protein-fasta' \
     -A data/genomic_accessions/pecto_dict_accessions \
     -o data/proteomes \
