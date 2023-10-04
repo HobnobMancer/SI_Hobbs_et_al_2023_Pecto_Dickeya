@@ -4,7 +4,7 @@
 
 This repository contains supplementary information for analyses reported in Hobbs et al. (2023), exploring the association between 
 the diversity of the Carbohydrate Active enZyme (CAZyme) complement and the carbohydrate processing phenotype and plant host range 
-of pythopathogens _Pectobacterium_ and _Dickeya_.
+of pythopathogens _Pectobacterium_, _Dickeya_ and recently defined _Musicola_.
 
 Run all commands provided in the walkthrough from the root of this directory.
 
@@ -14,11 +14,7 @@ Owing to the size of the data sets used, the figures are consequently compressed
 
 Additionally, some analyses are only briefly mentioned in the manuscript. The full method and results of these analyses are stored in this repository.
 
-For the complete analysis and results for each data set, follow the links:
-* [_Pectobacterium_ and _Dickeya_ genomes](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
-* [Intracellular and extracellular CAZyme](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_IE_cazomes.html)
-
-Find a full list of the results [here](#results).
+The complete analysis and results can be found in this [report](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html).
 
 ## How to use this repository.
 
@@ -110,13 +106,10 @@ Installation instructions for `signalP6` can be found [here](https://github.com/
 
 Owing to the size of the data sets used, the figures are consequently compressed in the final manuscript. This remote repository contains the original full size, high resolution figures.
 
-The original figures are found in the `results` directory, and contained within the `jupyter notebooks` used to run the analyses, which can be found here (the raw notebooks are for downloading and re-running locally, the website version are for viewing the results):
+The original figures are found in the `results` directory, and contained within the `jupyter notebooks` used to run the analyses, which can be found here (the raw notebook is for downloading and running locally, the website version is for viewing the results):
 * _Pectobacterium_ and _Dickeya_ reference data set:
     * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_pecto_dic_cazomes.ipynb)
     * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
-* Intracellular and extracellular CAZymes:
-    * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_IE_cazomes.ipynb)
-    * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_IE_cazomes.html)
 
 
 # Method: Reproducing the analyses
@@ -133,33 +126,24 @@ bioRxiv 2022.12.02.518825; doi: https://doi.org/10.1101/2022.12.02.518825
 
 ```bash
 # create a local CAZyme database
-scripts/build_cazyme_db.sh <email>
+scripts/download/build_cazyme_db.sh <email>
 ```
 
 This generated the local CAZyme database `data/cazy/cazy_db`.
 
 ## Download genomes
 
-## _Pectobacteriaceae_
+A plain text file listing the genomic version accessions of all 281 assemblies is listed in `data/genomic_accessions/pecto_dic_accessions`.
 
-### Download data
-
-`cazomevolve` was used to download all complete _Pectobacteriaceae_ genomic assemblies (in genome sequence and protein sequence FASTA file format) from NCBI Assembly, by querying the NCBI Taxonomy database and retrieving all genomic assemblies linked to the _Pectobacteriaceae_ (NCBI:txid1903410). To repeat this method, run the following command from the root of this directory:
+The proteome (`.faa`) protein and DNA sequence (`.fna`) FASTA files were downloaded from ncbi using the package `ncbi-genome-download`, configured using the bash script `download genomes.sh`:
 
 ```bash
-# download Pectobacteriaceae genomes from GenBank
-scripts/download/download_pecto_genomes.sh <email>
+scripts/download/download_genomes.sh
 ```
 
-**Note:** With the continual addition of new genomic assemblies to the NCBI Assembly database, repeating the download of _Pectobacteriaceae_ genomes may generate a different dataset to that presented in Hobbs _et al._. To repeat the analysis presented in the manuscript, run the following command from the root of the directory to configure `ncbi-genome-download` to download the 660 genomic assemblies of the genomes used in the manuscript:
+The download protein FASTA files were written to the `data/proteomes` directory, and the DNA sequence files were written to the `data/genomes` directory.
 
-```bash
-scripts/download/download_same_pecto_genomes.sh
-```
-
-In both cases, the downloaded genomic sequence files were written to the dir `data/pectobact/genomes`, the downloaded protein FASTA files were written to `data/pectobact/proteomes`.
-
-### Predict proteomes
+## Predict proteomes
 
 Not all genomic assemblies in NCBI are annotated, i.e. a proteome FASTA file (`.faa` file) is not available for all genomic sequences in NCBI.
 
@@ -169,9 +153,9 @@ To identify those genomes were a proteome FASTA file was not available, and thus
 scripts/download/ident_missing_proteomes.py
 ```
 
-The script generated a text file listing the genomic accession of each assembly for which a proteome FASTA file (`.faa`) file was not downloaded. The file was written to `data/pectobact/missing_genomes`. 
+The script generated a text file listing the genomic accession of each assembly for which a proteome FASTA file (`.faa`) file was not downloaded. The file was written to `data/missing_genomes`. 
 
-If using the 660 assemblies presented in the manuscript, proteome FASTA files were not available for 104 assemblies.
+If using the 281 assemblies presented in the manuscript, proteome FASTA files were not available for 104 assemblies.
 
 The script `annotate_genomes.sh` coordinates running `prodigal` on all genome sequences were a proteome FASTA file could not be retrieved, and copies the predicted proteome FASTA file to the `data/pectobact/proteome` directory.
 
@@ -179,23 +163,23 @@ The script `annotate_genomes.sh` coordinates running `prodigal` on all genome se
 scripts/download/annotates_genomes.sh
 ```
 
-### Annotate CAZomes
+## Annotate CAZomes
 
-#### Get CAZy annotated CAZymes
+### Get CAZy annotated CAZymes
 
 Configure using `cazomevolve` to identify CAZymes classified in the local CAZyme database, for both the _Pectobacteriaceae_.
 
 ```bash
-scripts/annotate_cazome/get_cazy_cazymes_pecto.sh
+scripts/annotate_cazome/get_cazy_cazymes.sh
 ```
 
 Two tab delimited lists were created:
-1. Listing the CAZy family accession and genomic accession per line: `data/pectobact/cazomes/pecto_fam_genomes`
-2. Listing the CAZy family, genomic accession and protein accession per line: `data/pectobact/cazomes/pecto_fam_genomes_proteins`
+1. Listing the CAZy family accession and genomic accession per line: `data/cazomes/fam_genomes_list`
+2. Listing the CAZy family, genomic accession and protein accession per line: `data/cazomes/fam_genomes_proteins_list`
 
-Proteins in the download protein FASTA files that were not listed in the local CAZyme database were written to `data/pectobact/cazomes/dbcan_input` for _Pectobacteriaceae_.
+Proteins in the download protein FASTA files that were not listed in the local CAZyme database were written to `data/cazomes/dbcan_input` for _Pectobacteriaceae_.
 
-#### Get dbCAN predicted CAZymes
+### Get dbCAN predicted CAZymes
 
 To retrieve the most comprehensive CAZome for each genome, protein sequences not found in the local CAZyme database were parsed by the CAZyme classifier [`dbCAN`](https://github.com/linnabrown/run_dbcan) (Zhang _et al._ 2018), configured using `cazomevolve`.
 
@@ -206,8 +190,7 @@ Run the following command from the root of this directory. *Note: depending on t
 **Note:** The following commands MUST be run from the same directory containing the `db` directory created when installing `dbCAN` - the following commands presumt the `db` dir is located in the root of this repository.
 
 ```bash
-# run dbcan for the pectobacteriaceae data set - using dbCAN version >= 2
-scripts/run_dbcan_pectobact.sh
+scripts/run_dbcan.sh
 ```
 
 After running dbCAN, use the following commands to parse the output from dbCAN and add the predicted CAZy family annotations, protein accessions and genomic accessions to the tab delimited lists created above.
@@ -215,17 +198,16 @@ After running dbCAN, use the following commands to parse the output from dbCAN a
 The command runs the `cazomevolve` command `cazevolve_get_dbcan` which can be used to parse the output from `dbCAN` version 2 and version 3.
 
 ```bash
-# parse pectobacteriaceae dbcan output
-scripts/get_dbcan_cazymes_pectobact.sh
+scripts/get_dbcan_cazymes.sh
 ```
 
 At the end, two plain text files will be generated, containing tab separated data:
 
-The _Pectobacteriaceae_ lists were written to:
-1. `data/pectobact/cazomes/pecto_fam_genomes`
-2. `data/pectobact/cazomes/pecto_fam_genomes_proteins`
+The predicted CAZyme annotations were added to:
+1. `data/cazomes/fam_genomes_list`
+2. `data/cazomes/fam_genomes_proteins_list`
 
-### Run ANI analysis and construct dendrogram
+## Run ANI analysis and construct dendrogram
 
 The software package `pyani` [Pritchard et al](https://doi.org/10.1039/C5AY02550H) was used to perform an average nucleotide identify (ANI) comparison between all pairs of _Pectobacteriaceae_ genomes, using the ANIm method.
 
@@ -235,7 +217,7 @@ The software package `pyani` [Pritchard et al](https://doi.org/10.1039/C5AY02550
 scripts/tree/ani/run_anim.sh
 ```
 
-This created a pyani database in `data/pectobact/tree`. Graphical outputs summarising the pyani analysis were written to `results/pectobact/tree/anim`.
+This created a pyani database in `data/tree`. Graphical outputs summarising the pyani analysis were written to `results/tree/anim`.
 
 **May need to run to double check what output is created, and how to get the tsv file for generating the dendrogram**.
 
@@ -244,72 +226,14 @@ A dendrogram was reconstructed from the ANIm analysis using the bash script `bui
 scripts/tree/ani/build_anim_tree.sh
 ```
 
-
-## _Pectobacterium_ and _Dickeya_
-
-### Download data
-
-Configure `ncbi-genome-download` to download genomic assemblies (genome sequence and protein sequence FASTA files) for the assembly accessions listed in `supplementary_files/supplementary_file_1`, which include the genomes for _Pectobacterium_, _Dickeya_, and _Hafnia alvei_ ATCC 13337, and decompresses the downloaded files.
-
-```bash
-# download Pectobacterium and dickeya genomes from RefSeq
-scripts/download_pd_genomes.sh
-```
-
-The downloaded genomic sequence files were written to the dir `data/pecto_dic/genomes`, the downloaded protein FASTA files were written to `data/pecto_dic/proteomes`.
-
-### Annotate CAZomes
-
-#### Get CAZy classified CAZymes
-
-Configure using `cazomevolve` to identify CAZymes classified in the local CAZyme database.
-
-```bash
-scripts/annotate_cazome/get_cazy_cazymes_pd.sh
-```
-
-Two tab delimited lists were created:
-1. Listing the CAZy family accession and genomic accession per line: `data/pecto_dic/cazomes/pd_fam_genomes`
-2. Listing the CAZy family, genomic accession and protein accession per line: `data/pecto_dic/cazomes/pd_fam_genomes_proteins`
-
-Proteins in the download protein FASTA files that were not listed in the local CAZyme database were written to `data/pecto_dic/cazomes/dbcan_input`.
-
-#### Get dbCAN predicted CAZymes
-
-To retrieve the most comprehensive CAZome for each genome, protein sequences not found in the local CAZyme database were parsed by the CAZyme classifier [`dbCAN`](https://github.com/linnabrown/run_dbcan) (Zhang _et al._ 2018), configured using `cazomevolve`.
-
-> Han Zhang, Tanner Yohe, Le Huang, Sarah Entwistle, Peizhi Wu, Zhenglu Yang, Peter K Busk, Ying Xu, Yanbin Yin; dbCAN2: a meta server for automated carbohydrate-active enzyme annotation, Nucleic Acids Research, Volume 46, Issue W1, 2 July 2018, Pages W95–W101, https://doi.org/10.1093/nar/gky418
-
-Run the following command from the root of this directory. *Note: depending on the computer resources this may take multiple days to complete*
-
-**Note:** The following commands MUST be run from the same directory containing the `db` directory created when installing `dbCAN` - the following commands presumt the `db` dir is located in the root of this repository.
-
-```bash
-# run dbcan for the pectobacterium&dickeya data set - using dbCAN version >= 3
-scripts/run_dbcan_pecto_dic.sh
-```
-
-After running dbCAN, use the following commands to parse the output from dbCAN and add the predicted CAZy family annotations, protein accessions and genomic accessions to the tab delimited lists created above.
-
-The commands run the `cazomevolve` command `cazevolve_get_dbcan` which can be used to parse the output from `dbCAN` version 2 and version 3.
-
-```bash
-# parse pectobacterium and dickeya dbcan output
-scripts/get_dbcan_cazymes_pecto_dic.sh
-```
-
-At the end, two plain text files will be generated, containing tab separated data:
-1. `data/pecto_dic/cazomes/pd_fam_genomes`
-2. `data/pecto_dic/cazomes/pd_fam_genomes_proteins`
-
-### Reconstruct phylogenetic tree
+## Reconstruct phylogenetic tree
 
 To reconstruct the phylogenetic tree of _Pectobacterium_, _Dickeya_ and _Musicola_, the method presented in 
 [Hugouvieux-Cotte-Pattat et al.](https://pure.strath.ac.uk/ws/portalfiles/portal/124038859/Hugouvieux_Cotte_Pattat_etal_IJSEM_2021_Proposal_for_the_creation_of_a_new_genus_Musicola_gen_nov_reclassification_of_Dickeya_paradisiaca.pdf) was used.
 
 The specific method is found in the [Hugouvieux-Cotte-Pattat et al. supplementary](https://widdowquinn.github.io/SI_Hugouvieux-Cotte-Pattat_2021/).
 
-#### CDS prediction
+### CDS prediction
 
 To ensure consistency of nomenclature and support back threading the nucleotides sequences onto 
 aligned single-copy orthologues, all downloaded RefSeq genomes were reannotated using 
@@ -322,12 +246,12 @@ scripts/tree/phylo/annotate_genomes.sh
 ```
 
 The annotate features were written to the following directories:  
-Proteins: `data/pecto_dic/tree/genomes/proteins`  
-CDS: `data/pecto_dic/tree/genomes/cds`  
-GBK: `data/pecto_dic/tree/genomes/gbk`  
+Proteins: `data/tree/genomes/proteins`  
+CDS: `data/tree/genomes/cds`  
+GBK: `data/tree/genomes/gbk`  
 
 
-#### Identify Single Copy Orthologues (SCOs)
+### Identify Single Copy Orthologues (SCOs)
 
 Orthologues present in the genomes were identified using [`orthofinder`](https://github.com/davidemms/OrthoFinder).
 
@@ -337,19 +261,19 @@ Orthologues present in the genomes were identified using [`orthofinder`](https:/
 scripts/tree/phylo/find_orthologues.sh
 ```
 
-The Orthofind output was written to `data/pecto_dic/tree/orthologues`. The SCO sequences are written to the dir `data/pecto_dic/tree/orthologues/Results_<date>/Single_Copy_Orthologue_Sequences`.
+The Orthofind output was written to `data/tree/orthologues`. The SCO sequences are written to the dir `data/tree/orthologues/Results_<date>/Single_Copy_Orthologue_Sequences`.
 
-#### Multiple Sequence Alignment
+### Multiple Sequence Alignment
 
 Each collection of single-copy orthologous was aligned using [`MAFFT`](https://mafft.cbrc.jp/alignment/software/).
 
-The output from `MAFFT` (the aligned files) are placed in the `data/pecto_dic/tree/sco_proteins_aligned` directory.
+The output from `MAFFT` (the aligned files) are placed in the `data/tree/sco_proteins_aligned` directory.
 
 ```bash
 scripts/tree/phylo/align_scos.sh <path to dir containing SCO seqs from orthofinder>
 ```
 
-#### Collect Single-Copy Orthologues CDS sequences
+### Collect Single-Copy Orthologues CDS sequences
 
 The CDS sequences corresponding to each set of single-copy orthologues are identified and extracted with the Python script `extract_cds.py`. To reproduce this analysis, ensure the `PROTDIR` constant in the script is directed to the correct output directory for orthofinder. The script can then be run from the current directory with:
 
@@ -358,9 +282,9 @@ python3 scripts/tree/phylo/extract_cds.py
 ```
 
 The output is a set of unaligned CDS sequences corresponding to each single-copy orthologue, which are 
-placed in the `data/pecto_dic/tree/sco_cds` directory
+placed in the `data/tree/sco_cds` directory
 
-#### Back-translate Aligned Single-Copy Orthologues
+### Back-translate Aligned Single-Copy Orthologues
 
 The single-copy orthologue CDS sequences were threaded onto the corresponding aligned protein sequences using [`t-coffee`](http://www.tcoffee.org/Projects/tcoffee/).
 
@@ -372,9 +296,9 @@ The results can be reproduced by executing the `backtranslate.sh` script from th
 scripts/tree/phylo/backtranslate.sh
 ```
 
-The backtranslated CDS sequences are placed in the `data/pecto_dic/tree/sco_cds_aligned` directory.
+The backtranslated CDS sequences are placed in the `data/tree/sco_cds_aligned` directory.
 
-#### Concatenating CDS into a Multigene Alignment
+### Concatenating CDS into a Multigene Alignment
 
 The threaded single-copy orthologue CDS sequences were concatenated into a single sequence per input organism using the Python script `concatenate_cds.py`. To reproduce this, execute the script from this directory with:
 
@@ -382,9 +306,9 @@ The threaded single-copy orthologue CDS sequences were concatenated into a singl
 python3 scripts/tree/phylo/concatenate_cds.py
 ```
 
-Two files are generated, a FASTA file with the concatenated multigene sequences, and a partition file allowing a different set of model parameters to be fit to each gene in phylogenetic reconstruction, written to `data/pecto_dic/tree/concatenated.fasta` and `data/pecto_dic/tree/concatenated.part`.
+Two files are generated, a FASTA file with the concatenated multigene sequences, and a partition file allowing a different set of model parameters to be fit to each gene in phylogenetic reconstruction, written to `data/tree/concatenated.fasta` and `data/tree/concatenated.part`.
 
-#### Phylogenetic reconstruction
+### Phylogenetic reconstruction
 
 To reconstruct the phylogenetic tree, the bash script `raxml_ng_build_tree.sh` is used, and is 
 run from the root of this repository. This executes a series of [`raxml-ng`](https://github.com/amkozlov/raxml-ng) commands.
@@ -416,15 +340,15 @@ python3 scripts/signalp/gather_cazyme_seqs.py
 scripts/signalp/run_signalp.sh
 ```
 
-The output from `signalP` was written to `data/pecto_dic/signalp/pd_signalp_output`.
+The output from `signalP` was written to `data/signalp/pd_signalp_output`.
 
-The Python script `get_ie_cazymes.py` was used to add the intracellular/extracellular annotations to the tab delimited files `data/pecto_dic/cazomes/pd_IE_fam_genomes_proteins` and `data/pecto_dic/cazomes/pd_fam_genomes_proteins_taxs`.
+The Python script `get_ie_cazymes.py` was used to add the intracellular/extracellular annotations to the tab delimited files `data/cazomes/pd_IE_fam_genomes_proteins` and `data/cazomes/pd_fam_genomes_proteins_taxs`.
 
 ```bash
 scripts/signalp/get_ie_cazymes.py
 ```
 
-`data/pecto_dic/cazomes/pd_IE_fam_genomes_proteins` and `data/pecto_dic/cazomes/pd_fam_genomes_proteins_taxs` include the headers 'Fam', 'Genome', and 'Protein'.
+`data/cazomes/pd_IE_fam_genomes_proteins` and `data/pd_fam_genomes_proteins_taxs` include the headers 'Fam', 'Genome', and 'Protein'.
 
 ## Add taxonomic classifications
 
@@ -445,74 +369,11 @@ scripts/tax/add_tax_phylotree.py
 
 ## Explore CAZome composition
 
-Exploration of the CAZomes for each data set (_Pectobacteriacea_, _Pectobacterium_ & _Dickeya_, and intra- and extra-cellular CAZymes) were preformed within `jupyter notebooks`, which are available in this repository  (the raw notebooks are for downloading and re-running locally, the website version are for viewing the results):
-* _Pectobacteriaceae_: 
-    * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_pectobact_cazomes.ipynb)
-    * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pectobact_cazomes.html)
-* _Pectobacterium_ and _Dickeya_ reference data set:
-    * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_pecto_dic_cazomes.ipynb)
-    * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
-* Intracellular and extracellular CAZymes:
-    * [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_IE_cazomes.ipynb)
-    * [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_IE_cazomes.html) 
-
+Exploration of the CAZomes for each data set (_Pectobacteriacea_, _Pectobacterium_ & _Dickeya_, and intra- and extra-cellular CAZymes) were preformed within a `jupyter notebook`, which is available in this repository  (the raw notebook is for downloading and re-running locally, the website version is for viewing the results):
+* [raw notebook](https://github.com/HobnobMancer/SI_Hobbs_et_al_2023_Pecto_Dickeya/blob/master/notebooks/explore_pecto_dic_cazomes.ipynb)
+* [website](https://hobnobmancer.github.io/SI_Hobbs_et_al_2023_Pecto_Dickeya/notebooks/explore_pecto_dic_cazomes.html)
 
 Specifically, the analyses performed in the notebooks were executed using the module `cazomevolve.cazome.explore`, which contains functions for exploring the CAZome annotated by `cazomevolve`. These are:
-
-```python
-from cazomevolve.cazome.explore import (
-    cazome_sizes,
-    identify_families,
-    parse_data,
-    pca,
-    plot,
-    taxonomies,
-)
-
-# parse the output from cazomevolve tab delimited lists
-parse_data.get_dbcan_fams_data()
-parse_data.build_fam_freq_df()
-parse_data.index_df()  # index genome, genus and species to be row names
-
-# add taxonomic information for taxonomic context
-taxonomies.add_tax_info()
-taxonomies.get_gtdb_db_tax_dict()  # in development
-taxonomies.get_gtdb_search_tax_dict()
-taxonomies.get_ncbi_tax_dict()  # in development
-taxonomies.get_group_sample_sizes()  # returns the number of genomes per group (genus or species)
-
-# summarise the size of the cazomes
-cazome_sizes.get_cazome_size_df()
-cazome_sizes.get_proteome_size()
-cazome_sizes.get_cazome_proportion_df()
-cazome_sizes.get_num_of_fams_per_group()
-
-# identify the core CAZome, i.e. families that appear in every genome
-identify_families.identify_core_cazome()
-identify_families.get_core_fam_freqs()
-
-# identify families that are specific to a group (i.e. genus or species)
-identify_families.get_group_specific_fams()
-
-# identity families that always appear together 
-identify_families.get_cooccurring_fams()  # across all genomes
-identify_families.get_grps_cooccurring_fams()  # in a specific group (i.e. genus or species)
-
-# visually summarise the data
-plot.get_clustermap()  # clustermap of cazy family freqs - potentially add clustering by cazy class freqs
-
-# perform and visualise PCA
-pca.perform_pca()
-pca.plot_explained_variance()
-pca.plot_spree()
-pca.plot_pca()  # project genomes onto PCs
-pca.plot_loadings()
-```
-
-## Compare trees
-
-??? to include here or in the thesis supplementary ???
-
 
 ## Identify associating CAZy families using `coinfinder`
 
@@ -524,20 +385,12 @@ Use the tool [`coinfinder`](https://github.com/fwhelan/coinfinder) (Whelan et al
 
 To reproduce the output from `coinfinder` in the same structure as presented in the manuscript (i.e. a circular tree surrounded by a heatmap), overwrite the file `network.R` in `coinfinder` with the respective R script in `scripts/coevolution`, and use the corresponding bash script:
 
-* _Pectobacteriaceae_
-    * `network.R`: `scripts/coevolution/pectobact_circular_network.R`
-    * bash: `scripts/coevolution/find_coevolving_pectobact.sh`
-* _Pectobacterium_ and _Dickeya_
-    * `network.R`: `scripts/coevolution/pd_circular_network.R`
-    * bash: `scripts/coevolution/find_coevolving_pd.sh`
+* `network.R`: `scripts/coevolution/pd_circular_network.R`
+* bash: `scripts/coevolution/find_coevolving_pd.sh`
 
 **Generate linear trees and heatmaps, with taxonomy information:**
 
 These circular heatmaps annotate each leaf of the tree with only the respective genomic version accession. To list the taxonomic infomration as well, on each leaf of the tree, overwrite the contents in the file `network.R` in `coinfinder` with the respective R script in `scripts/coevolution`, and use the respective bash script to configure `coinfinder`:
 
-* _Pectobacteriaceae_
-    * `network.R`: `scripts/coevolution/pectobact_taxs_rectangular_network.R`
-    * bash: `scripts/coevolution/find_coevolving_pectobact_with_tax.sh`
-* _Pectobacterium_ and _Dickeya_
-    * `network.R`: `scripts/coevolution/pd_taxs_rectangular_network.R`
-    * bash: `scripts/coevolution/find_coevolving_pd_with_tax.sh`
+* `network.R`: `scripts/coevolution/pd_taxs_rectangular_network.R`
+* bash: `scripts/coevolution/find_coevolving_pd_with_tax.sh`
