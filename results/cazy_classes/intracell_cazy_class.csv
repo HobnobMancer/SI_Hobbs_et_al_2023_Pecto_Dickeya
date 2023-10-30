@@ -1,0 +1,19 @@
+,Genus,CAZy Class,Intra,Mean Number of CAZymes,SdNum,MeanPercCAZymes,SdPerc
+0,Pectobacterium,GH,Intra,35.43,2.48,31.81,2.22
+1,Pectobacterium,GT,Intra,32.76,3.88,29.29,2.29
+2,Pectobacterium,PL,Intra,5.02,1.09,4.49,0.9
+3,Pectobacterium,CE,Intra,5.23,0.78,4.69,0.65
+4,Pectobacterium,AA,Intra,0.79,0.41,0.7,0.36
+5,Pectobacterium,CBM,Intra,2.96,0.37,2.66,0.36
+6,Dickeya,GH,Intra,31.77,3.56,27.95,2.51
+7,Dickeya,GT,Intra,39.8,3.3,35.09,2.84
+8,Dickeya,PL,Intra,5.78,1.18,5.07,0.98
+9,Dickeya,CE,Intra,4.01,0.28,3.55,0.4
+10,Dickeya,AA,Intra,0.52,0.5,0.45,0.43
+11,Dickeya,CBM,Intra,3.33,0.8,2.93,0.67
+12,Musicola,GH,Intra,28.0,1.0,30.1,0.75
+13,Musicola,GT,Intra,34.0,0.0,36.56,0.39
+14,Musicola,PL,Intra,6.0,0.0,6.45,0.07
+15,Musicola,CE,Intra,3.0,0.0,3.23,0.03
+16,Musicola,AA,Intra,0.0,0.0,0.0,0.0
+17,Musicola,CBM,Intra,3.0,0.0,3.23,0.03

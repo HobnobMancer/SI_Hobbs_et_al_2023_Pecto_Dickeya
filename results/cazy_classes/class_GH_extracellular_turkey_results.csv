@@ -1,0 +1,4 @@
+,group1,group2,meandiff,p-adj,lower,upper,reject
+0,Dickeya,Musicola,-2.3111,0.1563,-5.2593,0.6371,False
+1,Dickeya,Pectobacterium,3.4974,0.0,2.9688,4.026,True
+2,Musicola,Pectobacterium,5.8085,0.0,2.877,8.74,True
